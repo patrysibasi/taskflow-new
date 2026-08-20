@@ -32,52 +32,69 @@ function LoginPage() {
   }
 
   return (
-    <main>
-      <h1>TaskFlow</h1>
+    <main className="login-page">
+      <section className="login-card">
+        <div className="login-heading">
+          <span>Witaj ponownie</span>
 
-      <h2>Logowanie</h2>
+          <h1>TaskFlow</h1>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">
-            Email
-          </label>
-
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(event) =>
-              setEmail(event.target.value)
-            }
-          />
+          <p>
+            Zaloguj się, aby przejść do panelu
+            zarządzania zadaniami.
+          </p>
         </div>
 
-        <div>
-          <label htmlFor="password">
-            Hasło
-          </label>
+        <form
+          className="login-form"
+          onSubmit={handleSubmit}
+        >
+          <div className="login-field">
+            <label htmlFor="email">
+              Email
+            </label>
 
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(event) =>
-              setPassword(event.target.value)
-            }
-          />
-        </div>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(event) =>
+                setEmail(event.target.value)
+              }
+              autoComplete="email"
+            />
+          </div>
 
-        <button type="submit">
-          Zaloguj
-        </button>
-      </form>
+          <div className="login-field">
+            <label htmlFor="password">
+              Hasło
+            </label>
 
-      {error && (
-        <p>
-          {error}
-        </p>
-      )}
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(event) =>
+                setPassword(event.target.value)
+              }
+              autoComplete="current-password"
+            />
+          </div>
+
+          <button
+            className="login-button"
+            type="submit"
+          >
+            Zaloguj
+          </button>
+        </form>
+
+        {error && (
+          <p className="login-error">
+            {error}
+          </p>
+        )}
+      </section>
     </main>
   )
 }
