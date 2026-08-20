@@ -159,6 +159,7 @@ function TasksPage() {
       </div>
 
       <CreateTaskForm
+        users={users}
         onTaskCreated={handleTaskCreated}
       />
 
