@@ -15,10 +15,14 @@ import type { User } from "../types/user"
 import { getTasks } from "../services/taskService"
 import { getUsers } from "../services/userService"
 
+import { useAuth } from "../context/AuthContext"
+
 import TaskList from "../components/tasks/TaskList"
 import CreateTaskForm from "../components/tasks/CreateTaskForm"
 
 function TasksPage() {
+  const { user } = useAuth()
+
   const [tasks, setTasks] = useState<Task[]>([])
   const [users, setUsers] = useState<User[]>([])
 
@@ -31,17 +35,19 @@ function TasksPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
+  const isAdmin = user?.role === "admin"
+
   useEffect(() => {
     async function loadData() {
       try {
-        const [tasksData, usersData] =
-          await Promise.all([
-            getTasks(),
-            getUsers()
-          ])
+        const tasksData = await getTasks()
 
         setTasks(tasksData)
-        setUsers(usersData)
+
+        if (isAdmin) {
+          const usersData = await getUsers()
+          setUsers(usersData)
+        }
       } catch (error) {
         if (error instanceof Error) {
           setError(error.message)
@@ -56,7 +62,7 @@ function TasksPage() {
     }
 
     loadData()
-  }, [])
+  }, [isAdmin])
 
   const filteredTasks = useMemo(() => {
     return tasks.filter((task) => {
@@ -163,75 +169,77 @@ function TasksPage() {
         onTaskCreated={handleTaskCreated}
       />
 
-      <section className="task-filters">
-        <div className="task-filters-heading">
-          <span>FILTERS</span>
-          <h2>Filtrowanie</h2>
-        </div>
+      {isAdmin && (
+        <section className="task-filters">
+          <div className="task-filters-heading">
+            <span>FILTERS</span>
+            <h2>Filtrowanie</h2>
+          </div>
 
-        <div className="task-filter">
-          <label htmlFor="user-filter">
-            Użytkownik
-          </label>
+          <div className="task-filter">
+            <label htmlFor="user-filter">
+              Użytkownik
+            </label>
 
-          <select
-            id="user-filter"
-            value={
-              selectedUserId === null
-                ? ""
-                : selectedUserId
-            }
-            onChange={
-              handleUserFilterChange
-            }
-          >
-            <option value="">
-              Wszyscy użytkownicy
-            </option>
-
-            {users.map((user) => (
-              <option
-                key={user.id}
-                value={user.id}
-              >
-                {user.name}
+            <select
+              id="user-filter"
+              value={
+                selectedUserId === null
+                  ? ""
+                  : selectedUserId
+              }
+              onChange={
+                handleUserFilterChange
+              }
+            >
+              <option value="">
+                Wszyscy użytkownicy
               </option>
-            ))}
-          </select>
-        </div>
 
-        <div className="task-filter">
-          <label htmlFor="status-filter">
-            Status
-          </label>
+              {users.map((user) => (
+                <option
+                  key={user.id}
+                  value={user.id}
+                >
+                  {user.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          <select
-            id="status-filter"
-            value={
-              selectedStatus ?? ""
-            }
-            onChange={
-              handleStatusFilterChange
-            }
-          >
-            <option value="">
-              Wszystkie statusy
-            </option>
+          <div className="task-filter">
+            <label htmlFor="status-filter">
+              Status
+            </label>
 
-            <option value="pending">
-              Oczekujące
-            </option>
+            <select
+              id="status-filter"
+              value={
+                selectedStatus ?? ""
+              }
+              onChange={
+                handleStatusFilterChange
+              }
+            >
+              <option value="">
+                Wszystkie statusy
+              </option>
 
-            <option value="in_progress">
-              W trakcie
-            </option>
+              <option value="pending">
+                Oczekujące
+              </option>
 
-            <option value="completed">
-              Ukończone
-            </option>
-          </select>
-        </div>
-      </section>
+              <option value="in_progress">
+                W trakcie
+              </option>
+
+              <option value="completed">
+                Ukończone
+              </option>
+            </select>
+          </div>
+        </section>
+      )}
 
       {filteredTasks.length === 0 ? (
         <div className="empty-tasks">
