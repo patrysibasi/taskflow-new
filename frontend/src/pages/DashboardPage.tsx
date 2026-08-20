@@ -7,7 +7,7 @@ import { useAuth } from "../context/AuthContext"
 import { getTasks } from "../services/taskService"
 
 function DashboardPage() {
-  const { user, logout } = useAuth()
+  const { user } = useAuth()
 
   const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(true)
@@ -36,11 +36,23 @@ function DashboardPage() {
   }, [])
 
   if (loading) {
-    return <p>Ładowanie dashboardu...</p>
+    return (
+      <main className="dashboard-page">
+        <div className="dashboard-state">
+          Ładowanie dashboardu...
+        </div>
+      </main>
+    )
   }
 
   if (error) {
-    return <p>{error}</p>
+    return (
+      <main className="dashboard-page">
+        <div className="dashboard-state dashboard-state-error">
+          {error}
+        </div>
+      </main>
+    )
   }
 
   const pendingTasks = tasks.filter(
@@ -56,47 +68,84 @@ function DashboardPage() {
   ).length
 
   return (
-    <main>
-      <header>
-        <h1>TaskFlow</h1>
+    <main className="dashboard-page">
+      <section className="dashboard-heading">
+        <span className="page-eyebrow">
+          TASKFLOW
+        </span>
+
+        <h1>Dashboard</h1>
 
         {user && (
-          <>
-            <p>
-              Zalogowany jako: {user.name}
-            </p>
+          <p>
+            Witaj ponownie,{" "}
+            <strong>{user.name}</strong>
+          </p>
+        )}
+      </section>
+
+      {user && (
+        <section className="dashboard-user">
+          <div className="dashboard-user-avatar">
+            {user.name.charAt(0).toUpperCase()}
+          </div>
+
+          <div className="dashboard-user-info">
+            <span>AKTYWNY UŻYTKOWNIK</span>
+
+            <strong>{user.name}</strong>
 
             <p>{user.email}</p>
+          </div>
 
-            <p>
-              Rola: {user.role}
-            </p>
+          <div className="dashboard-user-role">
+            <span>ROLA</span>
 
-            <button onClick={logout}>
-              Wyloguj
-            </button>
-          </>
-        )}
-      </header>
+            <strong>{user.role}</strong>
+          </div>
+        </section>
+      )}
 
-      <section>
-        <h2>Dashboard</h2>
+      <section className="dashboard-stats">
+        <div className="dashboard-stat dashboard-stat-total">
+          <span className="dashboard-stat-label">
+            WSZYSTKIE ZADANIA
+          </span>
 
-        <p>
-          Wszystkie zadania: {tasks.length}
-        </p>
+          <strong>{tasks.length}</strong>
 
-        <p>
-          Oczekujące: {pendingTasks}
-        </p>
+          <p>Łączna liczba zadań</p>
+        </div>
 
-        <p>
-          W trakcie: {inProgressTasks}
-        </p>
+        <div className="dashboard-stat dashboard-stat-pending">
+          <span className="dashboard-stat-label">
+            OCZEKUJĄCE
+          </span>
 
-        <p>
-          Ukończone: {completedTasks}
-        </p>
+          <strong>{pendingTasks}</strong>
+
+          <p>Zadania do wykonania</p>
+        </div>
+
+        <div className="dashboard-stat dashboard-stat-progress">
+          <span className="dashboard-stat-label">
+            W TRAKCIE
+          </span>
+
+          <strong>{inProgressTasks}</strong>
+
+          <p>Aktualnie realizowane</p>
+        </div>
+
+        <div className="dashboard-stat dashboard-stat-completed">
+          <span className="dashboard-stat-label">
+            UKOŃCZONE
+          </span>
+
+          <strong>{completedTasks}</strong>
+
+          <p>Zadania zakończone</p>
+        </div>
       </section>
     </main>
   )

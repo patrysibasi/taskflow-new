@@ -1235,3 +1235,372 @@ main:has(form):not(.tasks-page) > form {
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
+
+.dashboard-page {
+  padding-top: 64px;
+}
+
+.dashboard-heading {
+  margin-bottom: 34px;
+}
+
+.dashboard-heading h1 {
+  margin-bottom: 14px;
+
+  background: var(--gradient-text);
+  background-clip: text;
+  -webkit-background-clip: text;
+
+  color: transparent;
+}
+
+.dashboard-heading p {
+  color: var(--text-soft);
+  font-size: 1.05rem;
+}
+
+.dashboard-heading p strong {
+  color: var(--text-bright);
+}
+
+/* =========================================================
+   DASHBOARD USER
+   ========================================================= */
+
+.dashboard-user {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  margin-bottom: 24px;
+  padding: 22px 24px;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(168, 85, 247, 0.1),
+      rgba(255, 255, 255, 0.035)
+    );
+
+  box-shadow:
+    var(--shadow-sm),
+    inset 0 1px rgba(255, 255, 255, 0.05);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.dashboard-user-avatar {
+  flex: 0 0 58px;
+
+  width: 58px;
+  height: 58px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 16px;
+
+  color: #ffffff;
+
+  background: var(--gradient-main);
+
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 700;
+
+  box-shadow:
+    0 10px 30px rgba(124, 58, 237, 0.3);
+}
+
+.dashboard-user-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.dashboard-user-info > span,
+.dashboard-user-role > span {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: var(--purple-bright);
+
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.dashboard-user-info > strong {
+  display: block;
+
+  color: var(--text-white);
+
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+}
+
+.dashboard-user-info > p {
+  margin-top: 2px;
+
+  color: var(--text-soft);
+  font-size: 0.88rem;
+}
+
+.dashboard-user-role {
+  min-width: 110px;
+
+  padding-left: 24px;
+
+  border-left: 1px solid var(--border);
+}
+
+.dashboard-user-role > strong {
+  color: var(--text-bright);
+
+  font-size: 0.95rem;
+  text-transform: capitalize;
+}
+
+/* =========================================================
+   DASHBOARD STATS
+   ========================================================= */
+
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.dashboard-stat {
+  position: relative;
+
+  min-height: 190px;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 24px;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.075),
+      rgba(255, 255, 255, 0.025)
+    );
+
+  box-shadow:
+    var(--shadow-sm),
+    inset 0 1px rgba(255, 255, 255, 0.05);
+
+  overflow: hidden;
+
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.dashboard-stat::before {
+  content: "";
+
+  position: absolute;
+
+  width: 150px;
+  height: 150px;
+
+  top: -90px;
+  right: -60px;
+
+  border-radius: 50%;
+
+  filter: blur(35px);
+
+  opacity: 0.5;
+
+  pointer-events: none;
+}
+
+.dashboard-stat:hover {
+  transform: translateY(-5px);
+
+  box-shadow:
+    0 24px 55px rgba(0, 0, 0, 0.3),
+    0 0 35px rgba(168, 85, 247, 0.08);
+}
+
+.dashboard-stat-label {
+  position: relative;
+  z-index: 1;
+
+  color: var(--text-soft);
+
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.dashboard-stat > strong {
+  position: relative;
+  z-index: 1;
+
+  display: block;
+
+  margin-top: auto;
+
+  font-family: var(--font-heading);
+  font-size: 3.4rem;
+  font-weight: 700;
+  line-height: 1;
+
+  color: var(--text-white);
+}
+
+.dashboard-stat > p {
+  position: relative;
+  z-index: 1;
+
+  margin-top: 10px;
+
+  color: var(--text-soft);
+  font-size: 0.85rem;
+}
+
+/* ---------- Stat colors ---------- */
+
+.dashboard-stat-total {
+  border-color: rgba(168, 85, 247, 0.18);
+}
+
+.dashboard-stat-total::before {
+  background: rgba(168, 85, 247, 0.25);
+}
+
+.dashboard-stat-total:hover {
+  border-color: rgba(168, 85, 247, 0.4);
+}
+
+.dashboard-stat-pending {
+  border-color: rgba(251, 191, 36, 0.16);
+}
+
+.dashboard-stat-pending::before {
+  background: rgba(251, 191, 36, 0.2);
+}
+
+.dashboard-stat-pending:hover {
+  border-color: rgba(251, 191, 36, 0.38);
+}
+
+.dashboard-stat-progress {
+  border-color: rgba(79, 140, 255, 0.18);
+}
+
+.dashboard-stat-progress::before {
+  background: rgba(79, 140, 255, 0.22);
+}
+
+.dashboard-stat-progress:hover {
+  border-color: rgba(79, 140, 255, 0.4);
+}
+
+.dashboard-stat-completed {
+  border-color: rgba(52, 211, 153, 0.18);
+}
+
+.dashboard-stat-completed::before {
+  background: rgba(52, 211, 153, 0.22);
+}
+
+.dashboard-stat-completed:hover {
+  border-color: rgba(52, 211, 153, 0.4);
+}
+
+/* =========================================================
+   DASHBOARD STATES
+   ========================================================= */
+
+.dashboard-state {
+  min-height: 220px;
+
+  display: grid;
+  place-items: center;
+
+  padding: 30px;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+
+  color: var(--text);
+
+  background: rgba(255, 255, 255, 0.035);
+
+  box-shadow:
+    var(--shadow-sm),
+    inset 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.dashboard-state-error {
+  border-color: rgba(251, 113, 133, 0.25);
+
+  color: #fda4af;
+
+  background: rgba(251, 113, 133, 0.06);
+}
+
+/* =========================================================
+   DASHBOARD RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1000px) {
+  .dashboard-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-page {
+    padding-top: 34px;
+  }
+
+  .dashboard-heading {
+    margin-bottom: 26px;
+  }
+
+  .dashboard-user {
+    align-items: flex-start;
+    flex-wrap: wrap;
+
+    padding: 20px;
+  }
+
+  .dashboard-user-role {
+    width: 100%;
+
+    padding-top: 16px;
+    padding-left: 0;
+
+    border-top: 1px solid var(--border);
+    border-left: 0;
+  }
+
+  .dashboard-stats {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .dashboard-stat {
+    min-height: 160px;
+  }
+}
