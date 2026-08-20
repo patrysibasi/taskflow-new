@@ -126,25 +126,49 @@ function TasksPage() {
   }
 
   if (loading) {
-    return <p>Ładowanie zadań...</p>
+    return (
+      <main>
+        <p>Ładowanie zadań...</p>
+      </main>
+    )
   }
 
   if (error) {
-    return <p>{error}</p>
+    return (
+      <main>
+        <p>{error}</p>
+      </main>
+    )
   }
 
   return (
-    <main>
-      <h1>Zadania</h1>
+    <main className="tasks-page">
+      <div className="page-heading">
+        <div>
+          <span className="page-eyebrow">
+            TASK MANAGEMENT
+          </span>
+
+          <h1>Zadania</h1>
+
+          <p>
+            Zarządzaj zadaniami, terminami
+            i ich realizacją.
+          </p>
+        </div>
+      </div>
 
       <CreateTaskForm
         onTaskCreated={handleTaskCreated}
       />
 
-      <section>
-        <h2>Filtrowanie</h2>
+      <section className="task-filters">
+        <div className="task-filters-heading">
+          <span>FILTERS</span>
+          <h2>Filtrowanie</h2>
+        </div>
 
-        <div>
+        <div className="task-filter">
           <label htmlFor="user-filter">
             Użytkownik
           </label>
@@ -175,7 +199,7 @@ function TasksPage() {
           </select>
         </div>
 
-        <div>
+        <div className="task-filter">
           <label htmlFor="status-filter">
             Status
           </label>
@@ -209,10 +233,14 @@ function TasksPage() {
       </section>
 
       {filteredTasks.length === 0 ? (
-        <p>
-          Brak zadań spełniających wybrane
-          kryteria
-        </p>
+        <div className="empty-tasks">
+          <strong>Brak zadań</strong>
+
+          <span>
+            Nie znaleziono zadań spełniających
+            wybrane kryteria.
+          </span>
+        </div>
       ) : (
         <TaskList
           tasks={filteredTasks}

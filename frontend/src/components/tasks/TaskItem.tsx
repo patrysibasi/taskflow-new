@@ -1,5 +1,4 @@
 import { useState } from "react"
-import type { ChangeEvent } from "react"
 
 import type { Task, TaskStatus } from "../../types/task"
 
@@ -9,8 +8,8 @@ import {
 } from "../../services/taskService"
 
 interface TaskItemProps {
-  task: Task,
-  userName: string,
+  task: Task
+  userName: string
   onTaskDeleted: (taskId: number) => void
   onTaskUpdated: (task: Task) => void
 }
@@ -25,6 +24,59 @@ function TaskItem({
   const [title, setTitle] = useState(task.title)
   const [loading, setLoading] = useState(false)
 
+  function getNextStatus(
+    status: TaskStatus
+  ): TaskStatus {
+    if (status === "pending") {
+      return "in_progress"
+    }
+
+    if (status === "in_progress") {
+      return "completed"
+    }
+
+    return "pending"
+  }
+
+  function getStatusLabel(
+    status: TaskStatus
+  ) {
+    if (status === "pending") {
+      return "Oczekujące"
+    }
+
+    if (status === "in_progress") {
+      return "W trakcie"
+    }
+
+    return "Ukończone"
+  }
+
+  async function handleStatusChange() {
+    const nextStatus = getNextStatus(task.status)
+
+    try {
+      setLoading(true)
+
+      const updatedTask = await updateTask(
+        task.id,
+        {
+          status: nextStatus
+        }
+      )
+
+      onTaskUpdated(updatedTask)
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(error.message)
+      } else {
+        alert("Nie udało się zmienić statusu")
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
   async function handleDelete() {
     try {
       setLoading(true)
@@ -37,31 +89,6 @@ function TaskItem({
         alert(error.message)
       } else {
         alert("Nie udało się usunąć zadania")
-      }
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  async function handleStatusChange(
-    event: ChangeEvent<HTMLSelectElement>
-  ) {
-    const status = event.target.value as TaskStatus
-
-    try {
-      setLoading(true)
-
-      const updatedTask = await updateTask(
-        task.id,
-        { status }
-      )
-
-      onTaskUpdated(updatedTask)
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message)
-      } else {
-        alert("Nie udało się zmienić statusu")
       }
     } finally {
       setLoading(false)
@@ -106,85 +133,92 @@ function TaskItem({
   }
 
   return (
-    <article>
-      {isEditing ? (
-        <>
-          <input
-            type="text"
-            value={title}
-            onChange={(event) =>
-              setTitle(event.target.value)
-            }
-            disabled={loading}
-          />
+    <article className="task-card">
+      <div className="task-card-content">
+        {isEditing ? (
+          <div className="task-edit">
+            <input
+              type="text"
+              value={title}
+              onChange={(event) =>
+                setTitle(event.target.value)
+              }
+              disabled={loading}
+            />
 
-          <button
-            onClick={handleSaveTitle}
-            disabled={loading}
-          >
-            Zapisz
-          </button>
+            <div className="task-edit-actions">
+              <button
+                type="button"
+                onClick={handleSaveTitle}
+                disabled={loading}
+              >
+                Zapisz
+              </button>
 
-          <button
-            onClick={handleCancelEdit}
-            disabled={loading}
-          >
-            Anuluj
-          </button>
-        </>
-      ) : (
-        <>
+              <button
+                type="button"
+                onClick={handleCancelEdit}
+                disabled={loading}
+              >
+                Anuluj
+              </button>
+            </div>
+          </div>
+        ) : (
           <h3>{task.title}</h3>
+        )}
+
+        <div className="task-status">
+          <span>Status</span>
 
           <button
+            type="button"
+            className={`status-button status-${task.status}`}
+            onClick={handleStatusChange}
+            disabled={loading}
+          >
+            {getStatusLabel(task.status)}
+          </button>
+        </div>
+
+        <div className="task-details">
+          <div className="task-detail">
+            <span>Przypisane do</span>
+            <strong>{userName}</strong>
+          </div>
+
+          <div className="task-detail">
+            <span>Termin</span>
+            <strong>
+              {task.due_date ?? "Brak terminu"}
+            </strong>
+          </div>
+        </div>
+      </div>
+
+      <div className="task-actions">
+        {!isEditing && (
+          <button
+            type="button"
+            className="task-edit-button"
             onClick={() => setIsEditing(true)}
             disabled={loading}
           >
             Edytuj
           </button>
-        </>
-      )}
+        )}
 
-      <p>
-        Status:
-      </p>
-
-      <select
-        value={task.status}
-        onChange={handleStatusChange}
-        disabled={loading}
-      >
-        <option value="pending">
-          Oczekujące
-        </option>
-
-        <option value="in_progress">
-          W trakcie
-        </option>
-
-        <option value="completed">
-          Ukończone
-        </option>
-      </select>
-
-      <p>
-        Przypisane do użytkownika: {userName}
-      </p>
-
-      <p>
-        Termin:{" "}
-        {task.due_date ?? "Brak terminu"}
-      </p>
-
-      <button
-        onClick={handleDelete}
-        disabled={loading}
-      >
-        Usuń
-      </button>
+        <button
+          type="button"
+          className="task-delete-button"
+          onClick={handleDelete}
+          disabled={loading}
+        >
+          Usuń
+        </button>
+      </div>
     </article>
   )
 }
 
 export default TaskItem
-

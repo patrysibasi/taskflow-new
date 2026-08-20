@@ -1,5 +1,7 @@
 import { useState } from "react"
+
 import { createTask } from "../../services/taskService"
+
 import type { Task } from "../../types/task"
 
 interface CreateTaskFormProps {
@@ -50,8 +52,11 @@ function CreateTaskForm({
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
+    <form
+      className="create-task-form"
+      onSubmit={handleSubmit}
+    >
+      <div className="create-task-field create-task-title">
         <label htmlFor="title">
           Tytuł zadania
         </label>
@@ -64,10 +69,11 @@ function CreateTaskForm({
             setTitle(event.target.value)
           }
           disabled={loading}
+          placeholder="Wpisz nazwę zadania..."
         />
       </div>
 
-      <div>
+      <div className="create-task-field create-task-date">
         <label htmlFor="dueDate">
           Termin
         </label>
@@ -84,14 +90,19 @@ function CreateTaskForm({
       </div>
 
       <button
+        className="create-task-button"
         type="submit"
         disabled={loading}
       >
-        {loading ? "Tworzenie..." : "Dodaj zadanie"}
+        {loading
+          ? "Tworzenie..."
+          : "Dodaj zadanie"}
       </button>
 
       {error && (
-        <p>{error}</p>
+        <p className="create-task-error">
+          {error}
+        </p>
       )}
     </form>
   )
