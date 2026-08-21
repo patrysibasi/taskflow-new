@@ -23,14 +23,43 @@ export async function createTask(
 ) {
     const result = await pool.query(
         `
-        INSERT INTO tasks (title, user_id, due_date)
+        INSERT INTO tasks (
+            title,
+            user_id,
+            due_date
+        )
         VALUES ($1, $2, $3)
-        RETURNING *
+        RETURNING id
         `,
-        [title, userId, dueDate ?? null]
+        [
+            title,
+            userId,
+            dueDate ?? null
+        ]
     )
 
-    return result.rows[0]
+    const task = result.rows[0]
+
+    if (!task) {
+        throw new Error(
+            "Nie udało się utworzyć zadania"
+        )
+    }
+
+    const taskWithUser = await pool.query(
+        `
+        SELECT
+            tasks.*,
+            users.name AS user_name
+        FROM tasks
+        INNER JOIN users
+            ON users.id = tasks.user_id
+        WHERE tasks.id = $1
+        `,
+        [task.id]
+    )
+
+    return taskWithUser.rows[0] ?? null
 }
 
 export async function getTaskById(
@@ -69,7 +98,7 @@ export async function updateTask(
             due_date = COALESCE($3, due_date)
         WHERE id = $4
           AND ($5 = 'admin' OR user_id = $6)
-        RETURNING *
+        RETURNING id
         `,
         [
             title,
@@ -81,7 +110,26 @@ export async function updateTask(
         ]
     )
 
-    return result.rows[0] ?? null
+    const task = result.rows[0]
+
+    if (!task) {
+        return null
+    }
+
+    const taskWithUser = await pool.query(
+        `
+        SELECT
+            tasks.*,
+            users.name AS user_name
+        FROM tasks
+        INNER JOIN users
+            ON users.id = tasks.user_id
+        WHERE tasks.id = $1
+        `,
+        [task.id]
+    )
+
+    return taskWithUser.rows[0] ?? null
 }
 
 export async function deleteTask(

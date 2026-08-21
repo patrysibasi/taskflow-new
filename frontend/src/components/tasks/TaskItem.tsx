@@ -29,6 +29,14 @@ function TaskItem({
     user?.role === "admin" ||
     user?.id === task.user_id
 
+  function formatDueDate(date: string | null) {
+    if (!date) {
+      return "Brak terminu"
+    }
+
+    return new Date(date).toLocaleDateString("pl-PL")
+  }
+
   function getNextStatus(
     status: TaskStatus
   ): TaskStatus {
@@ -213,7 +221,7 @@ function TaskItem({
           <div className="task-detail">
             <span>Termin</span>
             <strong>
-              {task.due_date ?? "Brak terminu"}
+              {formatDueDate(task.due_date)}
             </strong>
           </div>
         </div>
