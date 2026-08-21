@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useAuth } from "../../context/AuthContext"
 
 import type { Task, TaskStatus } from "../../types/task"
 
@@ -9,20 +10,24 @@ import {
 
 interface TaskItemProps {
   task: Task
-  userName: string
   onTaskDeleted: (taskId: number) => void
   onTaskUpdated: (task: Task) => void
 }
 
 function TaskItem({
   task,
-  userName,
   onTaskDeleted,
   onTaskUpdated
 }: TaskItemProps) {
+  const { user } = useAuth()
+
   const [isEditing, setIsEditing] = useState(false)
   const [title, setTitle] = useState(task.title)
   const [loading, setLoading] = useState(false)
+
+  const canModify =
+    user?.role === "admin" ||
+    user?.id === task.user_id
 
   function getNextStatus(
     status: TaskStatus
@@ -53,6 +58,12 @@ function TaskItem({
   }
 
   async function handleStatusChange() {
+    if (!canModify) {
+      alert(
+        "Możesz zmienić status tylko zadań przypisanych do Ciebie."
+      )
+    }
+
     const nextStatus = getNextStatus(task.status)
 
     try {
@@ -78,6 +89,12 @@ function TaskItem({
   }
 
   async function handleDelete() {
+    if (!canModify) {
+      alert(
+        "Możesz usunąć tylko zadania przypisane do Ciebie."
+      )
+    }
+
     try {
       setLoading(true)
 
@@ -96,6 +113,12 @@ function TaskItem({
   }
 
   async function handleSaveTitle() {
+    if (!canModify) {
+      alert(
+        "Możesz edytować tylko zadania przypisane do Ciebie."
+      )
+    }
+
     const trimmedTitle = title.trim()
 
     if (!trimmedTitle) {
@@ -175,7 +198,7 @@ function TaskItem({
             type="button"
             className={`status-button status-${task.status}`}
             onClick={handleStatusChange}
-            disabled={loading}
+            disabled={loading || !canModify}
           >
             {getStatusLabel(task.status)}
           </button>
@@ -184,7 +207,7 @@ function TaskItem({
         <div className="task-details">
           <div className="task-detail">
             <span>Przypisane do</span>
-            <strong>{userName}</strong>
+            <strong>{task.user_name}</strong>
           </div>
 
           <div className="task-detail">
@@ -197,7 +220,7 @@ function TaskItem({
       </div>
 
       <div className="task-actions">
-        {!isEditing && (
+        {canModify && !isEditing && (
           <button
             type="button"
             className="task-edit-button"
@@ -207,15 +230,16 @@ function TaskItem({
             Edytuj
           </button>
         )}
-
-        <button
-          type="button"
-          className="task-delete-button"
-          onClick={handleDelete}
-          disabled={loading}
-        >
-          Usuń
-        </button>
+        {canModify && ( 
+          <button
+            type="button"
+            className="task-delete-button"
+            onClick={handleDelete}
+            disabled={loading}
+          >
+            Usuń
+          </button>
+        )}
       </div>
     </article>
   )

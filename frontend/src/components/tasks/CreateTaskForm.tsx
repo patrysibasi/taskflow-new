@@ -136,15 +136,12 @@ function CreateTaskForm({
             </option>
 
             {users
-              .filter(
-                (user) => user.role === "employee"
-              )
               .map((user) => (
                 <option
                   key={user.id}
                   value={user.id}
                 >
-                  {user.name}
+                  {user.name} ({user.role})
                 </option>
               ))}
           </select>

@@ -253,7 +253,6 @@ function TasksPage() {
       ) : (
         <TaskList
           tasks={filteredTasks}
-          users={users}
           onTaskDeleted={handleTaskDeleted}
           onTaskUpdated={handleTaskUpdated}
         />

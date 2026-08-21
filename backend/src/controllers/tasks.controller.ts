@@ -26,10 +26,7 @@ export async function getTasks(
         return
     }
 
-    const tasks = await getTasksFromService(
-        authUser.userId,
-        authUser.role
-    )
+    const tasks = await getTasksFromService()
 
     res.json(tasks)
 }
@@ -91,9 +88,7 @@ export async function getTaskById(
     const id = Number(req.params.id)
 
     const task = await getTaskByIdFromService(
-        id,
-        authUser.userId,
-        authUser.role
+        id
     )
 
     if (!task) {

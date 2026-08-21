@@ -1,31 +1,18 @@
 import { pool } from "../db/database.js"
 
 export async function getTasks(
-    userId: number,
-    role: "admin" | "employee"
 ) {
-    if (role === "admin") {
-        const result = await pool.query(
-            `
-            SELECT *
-            FROM tasks
-            ORDER BY created_at DESC
-            `
-        )
-
-        return result.rows
-    }
-
     const result = await pool.query(
         `
-        SELECT *
+        SELECT 
+            tasks.*,
+            users.name AS user_name
         FROM tasks
-        WHERE user_id = $1
-        ORDER BY created_at DESC
-        `,
-        [userId]
+        INNER JOIN users
+            on users.id = tasks.user_id
+        ORDER BY tasks.created_at DESC
+        `
     )
-
     return result.rows
 }
 
@@ -48,30 +35,18 @@ export async function createTask(
 
 export async function getTaskById(
     id: number,
-    userId: number,
-    role: "admin" | "employee"
 ) {
-    if (role === "admin") {
-        const result = await pool.query(
-            `
-            SELECT *
-            FROM tasks
-            WHERE id = $1
-            `,
-            [id]
-        )
-
-        return result.rows[0] ?? null
-    }
-
     const result = await pool.query(
         `
-        SELECT *
+        SELECT 
+            tasks.*,
+            users.name as user_name
         FROM tasks
-        WHERE id = $1
-          AND user_id = $2
+        INNER JOIN
+            users on tasks.user_id = users.id
+        WHERE tasks.id = $1
         `,
-        [id, userId]
+        [id]
     )
 
     return result.rows[0] ?? null
